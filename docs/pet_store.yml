@@ -1,0 +1,175 @@
+swagger: "2.0"
+info:
+  version: "1.1"
+  title: Pet Shop API
+# basePath prefixes all resource paths
+basePath: /v1
+schemes:
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:            
+  /stores:
+    get:
+      description: List stores
+      parameters:
+        - $ref: '#/parameters/Limit'
+      responses:
+        200:
+          headers:
+            X-Rate-Limit-Limit:
+              description: "The number of allowed requests in the current period"
+              type: "integer"
+              minimum: 0
+              maximum: 100
+          description: List of stores
+          examples:
+            application/json:
+              - city: Los Angeles
+                state: California
+                address: 123 Main St.
+                postal_code: 90210
+              - city: Santa Barbara
+                state: California
+                address: 321 Ship Rd.
+                postal_code: 93101
+          schema:
+            title: Stores
+            type: array
+            items:
+              $ref: '#/definitions/Store'
+  /pets:
+    get:
+      description: List Pets
+      parameters:
+        - $ref: '#/parameters/Limit'
+      responses:
+        200:
+          description: List of Pets
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Pet'
+    post:
+      description: Create a Pet
+      parameters:
+        - name: pet
+          in: body
+          description: The pet JSON you want to post
+          schema:
+            $ref: '#/definitions/Pet'
+          required: true
+      responses:
+        422:
+          description: Unprocessable entity
+          $ref: '#/responses/UnprocessableEntity'
+
+        201:
+          description: Pet created
+          schema:
+            $ref: '#/definitions/Pet'
+
+  /pets/{id}:
+    get:
+      description: Find pet by ID
+      parameters:
+        - name: id
+          in: path
+          description: Pet ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: A pet
+          schema:
+            $ref: '#/definitions/Pet'
+          examples:
+            application/json:
+              name: Chauncy
+              type: dog
+        404:
+          $ref: '#/responses/NotFound'
+          description: Pet not found
+
+parameters:
+  "Limit":
+    name: limit
+    in: query
+    description: number of items to return
+    type: integer
+    default: 10
+    minimum: 1
+    maximum: 1000
+
+responses:
+  "UnprocessableEntity":
+    description: Unprocessable entity.
+    examples:
+      application/json:
+        errors:
+          - message: "Unprocessable entity"
+    schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+
+  "NotFound":
+    description: "Entity not found."
+    examples:
+      application/json:
+        errors:
+          - message: "Entity not found"
+    schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+
+definitions:
+  Store:
+    type: object
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      postal_code:
+        type: string
+    required:
+      - address
+      - city
+      - state
+      - postal_code
+  Pet:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        enum: [ "dog", "cat", "bird" ]
+    required:
+      - name
+      - type
