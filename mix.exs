@@ -37,8 +37,9 @@ defmodule PetStore.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
 
-     #{:apocryphal, path: "../../oss/apocryphal", only: [:test, :dev]}]
-     {:apocryphal, "~> 0.2.0", only: [:test, :dev]}]
+     #{:apocryphal, path: "../../oss/apocryphal", only: [:test, :dev]}
+     {:apocryphal, "~> 0.2.3", only: [:test, :dev]}
+     ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

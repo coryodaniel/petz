@@ -19,7 +19,7 @@ config :apocryphal,
   }
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :info
 
 # Configure your database
 config :petz, PetStore.Repo,
